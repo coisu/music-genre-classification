@@ -1,8 +1,9 @@
 # music-genre-classification
 study for machine learning
 
-
+wget https://os.unil.cloud.switch.ch/fma/fma_small.zip
 unzip fma_small.zip
+wget https://os.unil.cloud.switch.ch/fma/fma_metadata.zip
 unzip fma_metadata.zip
 
 docker build -t music-genre-classifier .
