@@ -1,0 +1,9 @@
+*.csv
+*.mp3
+*.wav
+*.mp4
+*.npz
+
+*.zip
+fma_small/
+fma_metadata/
