@@ -1,9 +1,17 @@
+[Ongoing project] : trying to apply class weights to address the class imbalance issue 
+
+
 # music-genre-classification
 study for machine learning
 
+# related env, tools, frameworks
+linux Docker tensorflow flask Makefile
+
+# 
+
 ```
 wget https://os.unil.cloud.switch.ch/fma/fma_small.zip
-wget unzip fma_small.zip
+unzip fma_small.zip
 wget https://os.unil.cloud.switch.ch/fma/fma_metadata.zip
 unzip fma_metadata.zip
 ```
