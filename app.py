@@ -2,19 +2,27 @@ import os
 import numpy as np
 import librosa
 import pandas as pd
-from flask import Flask, request, render_template, redirect
+from flask import Flask, request, render_template, redirect, url_for
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dropout, Flatten, Dense
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.utils import to_categorical
 import traceback
 import tensorflow as tf
+import matplotlib.pyplot as plt
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['ALLOWED_EXTENSIONS'] = {'mp3'}
 GENRES = ['Classical', 'Pop', 'Rock', 'Jazz', 'Hip-Hop', 'Country', 'Metal', 'Reggae']
 DATASET_PATH = 'fma_small'
+
+
+# 메타데이터에서 장르 정보 가져오기
+metadata = pd.read_csv('fma_metadata/tracks.csv', header=[0, 1])
+
+# 'track_id'를 인덱스로 설정하고 'genre_top'을 가져옵니다.
+track_genre = metadata['track', 'genre_top']
 
 preprocessed_data_file = 'preprocessed_data.npz'
 
@@ -37,7 +45,28 @@ def extract_features(file_path, max_pad_len=174):
         print(f"Error parsing file {file_path}: {e}")
         return None
 
-# Train and save the model in .pb format
+# Function to save prediction results as a bar chart image
+def save_genre_prediction_plot(prediction, output_image_path):
+    plt.figure(figsize=(10, 6))
+    plt.bar(GENRES, prediction[0] * 100)
+    plt.xlabel('Genres')
+    plt.ylabel('Percentage Match (%)')
+    plt.title('Music Genre Prediction')
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.savefig(output_image_path)
+    plt.close()
+
+# Load the trained model or train it if it doesn't exist
+def load_or_train_model():
+    if not os.path.exists('music_genre_classifier_saved_model'):
+        print("No pre-trained model found. Training a new model...")
+        train_model()
+    else:
+        print("Pre-trained model found. Skipping training.")
+    return load_model()
+
+# Train and save the model
 def train_model():
     # Load or preprocess data
     if os.path.exists(preprocessed_data_file):
@@ -49,9 +78,6 @@ def train_model():
         print("Processing fma_small data...")
         metadata = pd.read_csv('fma_metadata/tracks.csv', header=[0, 1])
 
-        # Debugging: Check the structure of the metadata
-        print(metadata.head())
-
         track_genre = metadata['track', 'genre_top']
 
         # Scan for existing files
@@ -61,9 +87,6 @@ def train_model():
                 if file.endswith('.mp3'):
                     file_id = os.path.splitext(file)[0]
                     existing_files.add(file_id)
-
-        # Debugging: Print the number of found files
-        print(f"Found {len(existing_files)} .mp3 files.")
 
         X, y = [], []
         for i, (track_id, genre) in enumerate(track_genre.items()):
@@ -145,7 +168,7 @@ def upload_file():
         file.save(file_path)
 
         # Load the model and make a prediction
-        model = load_model()
+        model = load_or_train_model()
         if model is not None:
             mfcc = extract_features(file_path)
             if mfcc is not None:
@@ -153,7 +176,12 @@ def upload_file():
                 mfcc = mfcc[np.newaxis, ..., np.newaxis]
                 prediction = model.predict(mfcc)
                 predicted_genre = GENRES[np.argmax(prediction)]
-                return render_template('result.html', genre=predicted_genre)
+
+                # Save the genre prediction chart as an image
+                prediction_chart_path = os.path.join('static', 'prediction_chart.png')
+                save_genre_prediction_plot(prediction, prediction_chart_path)  # Save the chart
+
+                return render_template('result.html', genre=predicted_genre, prediction_chart='prediction_chart.png')
     return redirect(request.url)
 
 if __name__ == "__main__":
@@ -161,9 +189,9 @@ if __name__ == "__main__":
     if not os.path.exists('uploads'):
         os.makedirs('uploads')
 
-    # Train the model if needed
-    if not os.path.exists('music_genre_classifier_saved_model'):
-        train_model()
+    # Ensure static directory exists for storing the prediction chart image
+    if not os.path.exists('static'):
+        os.makedirs('static')
 
-    # Start the Flask app
-    app.run(host='0.0.0.0', port=5000)
+    # Start the Flask app in debug mode
+    app.run(host='0.0.0.0', port=5000, debug=True)
