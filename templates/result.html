@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prediction Result</title>
+    <title>Music Genre Prediction</title>
 </head>
 <body>
     <h1>Predicted Genre: {{ genre }}</h1>
-    <a href="/">Upload another file</a>
+    <h2>Genre Match Percentage</h2>
+    <img src="{{ url_for('static', filename=prediction_chart) }}" alt="Genre Prediction Chart">
 </body>
 </html>
