@@ -1,4 +1,4 @@
-[Ongoing project] : trying to apply class weights to address the class imbalance issue 
+[Ongoing project] : trying to apply class weights to address the class imbalance issue for higher accuracy
 
 
 # music-genre-classification
