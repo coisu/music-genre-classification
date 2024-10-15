@@ -1,4 +1,5 @@
 _[Ongoing project] : trying to apply class weights to address the class imbalance issue for higher accuracy_
+_+ apply openai api for better result user friendly info_
 
 
 # music-genre-classification
@@ -8,7 +9,7 @@ study for machine learning
 ## Required Environment
 > ### Essential Software:
 * **Docker**:  Required to run the project in a containerized environment.
-* **Make**:  Used to automate build and execution tasks via the Makefile.
+* **Make**:  Used to automate build and execution tasks via the `Makefile`.
 * **Python 3.8** or **higher**:  The project has been tested on Python 3.8 or above.
 > ### Required Libraries:
   Libraries listed in `requirements.txt` are needed. These will be installed automatically within the Docker container.
