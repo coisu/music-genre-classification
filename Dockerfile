@@ -5,11 +5,18 @@ FROM python:3.8-slim
 WORKDIR /app
 
 # Install required system dependencies
-RUN apt-get update && apt-get install -y ffmpeg libsndfile1
+RUN apt-get update && apt-get install -y ffmpeg libsndfile1 mpg123
+
+# Disable oneDNN optimizations
+ENV TF_ENABLE_ONEDNN_OPTS=0
 
 # Copy the necessary files
-COPY requirements.txt requirements.txt
 COPY . .
+# COPY requirements.txt requirements.txt
+# COPY app.py . 
+# COPY train_if_needed.py train_if_needed.py
+# COPY templates/ templates/
+# RUN if [ -f class_weights.txt ]; then cp class_weights.txt .; else echo "class_weights.txt not found, skipping"; fi
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt

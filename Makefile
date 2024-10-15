@@ -2,6 +2,10 @@
 IMAGE_NAME = music-genre-classifier
 CONTAINER_NAME = music-genre-container
 PORT = 5000
+CLASS_WEIGHTS_FILE = class_weights.txt
+MODEL_DIR = music_genre_classifier_saved_model
+KERAS_MODEL = music_genre_classifier.keras
+H5_MODEL = music_genre_classifier.h5
 
 # Build, run, and display logs
 all: build run logs
@@ -23,17 +27,22 @@ logs:
 
 # Stop the running container
 stop:
-	docker stop $(CONTAINER_NAME)
+	-@docker stop $(CONTAINER_NAME)
 
 # Remove the stopped container
 clean:
-	docker rm $(CONTAINER_NAME)
+	-@docker rm $(CONTAINER_NAME)
 
 # Rebuild the Docker image and run the container
 re: stop clean build run
 
-# Clean all Docker resources (containers and images)
+# Clean all Docker resources (containers, images, class weights, and model files)
 fclean: stop clean
-	docker rmi $(IMAGE_NAME)
+	@echo "Removing Docker image and files..."
+	-@docker rmi $(IMAGE_NAME)
+	-rm -f $(CLASS_WEIGHTS_FILE)
+	-rm -rf $(MODEL_DIR)
+	-rm -f $(KERAS_MODEL)
+	-rm -f $(H5_MODEL)
 
 .PHONY: build run stop clean re logs fclean
