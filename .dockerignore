@@ -1,0 +1,8 @@
+*.zip
+*.tar.gz
+samples/
+uploads/
+fma_medium
+fma_metadata
+Makefile
+README.md
