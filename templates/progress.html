@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dataset Progress</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>Dataset Progress</h1>
+    <div id="progress-bar" style="width: 100%; background-color: #ddd;">
+        <div id="progress" style="width: 0%; height: 30px; background-color: #4CAF50;"></div>
+    </div>
+    <p id="progress-percentage">0%</p> <!-- Add a field for showing percentage -->
+    <p id="log"></p> <!-- Field for logs -->
+
+    <script type="text/javascript">
+        var socket = io();
+
+        socket.on('progress_update', function(data) {
+            // Update progress bar
+            var progressElement = document.getElementById('progress');
+            var percentageElement = document.getElementById('progress-percentage');
+            var logElement = document.getElementById('log');
+            
+            progressElement.style.width = data.progress + '%';
+            percentageElement.innerText = data.progress + '%';
+            
+            // Update logs
+            if (data.log) {
+                logElement.innerText = data.log;
+            }
+        });
+    </script>
+</body>
+</html>

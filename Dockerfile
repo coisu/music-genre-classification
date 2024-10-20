@@ -12,20 +12,12 @@ ENV TF_ENABLE_ONEDNN_OPTS=0
 
 # Copy the necessary files
 COPY . .
-# COPY requirements.txt requirements.txt
-# COPY app.py . 
-# COPY train_if_needed.py train_if_needed.py
-# COPY templates/ templates/
-# RUN if [ -f class_weights.txt ]; then cp class_weights.txt .; else echo "class_weights.txt not found, skipping"; fi
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Run the script to train the model if needed
-RUN python train_if_needed.py
-
 # Run the Flask app
-CMD ["python", "app.py"]
+CMD ["python", "test.py"]
 
 
 
